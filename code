@@ -1,0 +1,51 @@
+import os
+import shutil
+
+def organiser_dossier(chemin_dossier):
+    # 1. Définir les catégories et leurs extensions associées
+    extensions = {
+        "Images": [".jpg", ".jpeg", ".png", ".gif", ".svg"],
+        "Documents": [".pdf", ".docx", ".txt", ".xlsx", ".pptx"],
+        "Videos": [".mp4", ".mov", ".avi"],
+        "Musique": [".mp3", ".wav"],
+        "Archives": [".zip", ".tar", ".rar"]
+    }
+
+    # Vérifier si le chemin existe
+    if not os.path.exists(chemin_dossier):
+        print("Le dossier spécifié n'existe pas.")
+        return
+
+    # 2. Parcourir les fichiers du dossier
+    for fichier in os.listdir(chemin_dossier):
+        chemin_complet = os.path.join(chemin_dossier, fichier)
+
+        # On ignore les dossiers, on ne traite que les fichiers
+        if os.path.isfile(chemin_complet):
+            extension = os.path.splitext(fichier)[1].lower()
+            deplace = False
+
+            # 3. Trouver la bonne catégorie
+            for categorie, ext_liste in extensions.items():
+                if extension in ext_liste:
+                    dossier_cible = os.path.join(chemin_dossier, categorie)
+                    
+                    # Créer le dossier de catégorie s'il n'existe pas
+                    if not os.path.exists(dossier_cible):
+                        os.makedirs(dossier_cible)
+                    
+                    # Déplacer le fichier
+                    shutil.move(chemin_complet, os.path.join(dossier_cible, fichier))
+                    print(f"Déplacé : {fichier} -> {categorie}")
+                    deplace = True
+                    break
+            
+            if not deplace:
+                print(f"Ignoré (extension inconnue) : {fichier}")
+
+# --- TEST DU SCRIPT ---
+# Attention : Remplace 'Ton_Dossier_Test' par un vrai chemin (ex: 'C:/Users/Nom/Downloads/Test')
+# Ne le teste pas directement sur ton bureau sans créer un dossier de test avant !
+mon_dossier = "Dossier_A_Ranger" 
+if __name__ == "__main__":
+    organiser_dossier(mon_dossier)
